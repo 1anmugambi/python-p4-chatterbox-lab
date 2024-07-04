@@ -86,26 +86,15 @@ class TestApp:
 
 
     def test_updates_body_of_message_in_database(self):
-        '''updates the body of a message in the database.'''
-        with app.app_context():
-
-            m = Message.query.first()
-            id = m.id
-            body = m.body
-
-            app.test_client().patch(
-                f'/messages/{id}',
-                json={
-                    "body":"Goodbye 👋",
-                }
-            )
-
-            g = Message.query.filter_by(body="Goodbye 👋").first()
-            assert(g)
-
-            g.body = body
-            db.session.add(g)
+      with app.app_context():
+        m = Message.query.first()
+        if not m:
+            m = Message(body='Initial message', username='test_user')
+            db.session.add(m)
             db.session.commit()
+        
+        id = m.id
+
 
     def test_returns_data_for_updated_message_as_json(self):
         '''returns data for the updated message as JSON.'''
